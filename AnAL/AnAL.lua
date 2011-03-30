@@ -107,7 +107,7 @@ end
 -- @param h The height of the frame
 -- @param delay The delay before the next frame is shown
 function animation:addFrame(x, y, w, h, delay)
-	local frame = love.graphics.newQuad(x, y, w, h, a.img:getWidth(), a.img:getHeight())
+	local frame = love.graphics.newQuad(x, y, w, h, self.img:getWidth(), self.img:getHeight())
 	table.insert(self.frames, frame)
 	table.insert(self.delays, delay)
 end
