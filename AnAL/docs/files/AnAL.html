@@ -1,0 +1,576 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li><strong>AnAL.lua</strong></li>
+	
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>AnAL.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:addFrame">animation:addFrame</a>&nbsp;(x, y, w, h, delay)</td>
+	<td class="summary">Add a frame </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:draw">animation:draw</a>&nbsp;(x, y, angle, sx, sy, ox, oy)</td>
+	<td class="summary">Draw the animation </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:getCurrentFrame">animation:getCurrentFrame</a>&nbsp;()</td>
+	<td class="summary">Get the currently shown frame </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:getHeight">animation:getHeight</a>&nbsp;()</td>
+	<td class="summary">Get the height of the current frame </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:getSize">animation:getSize</a>&nbsp;()</td>
+	<td class="summary">Get the number of frames </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:getWidth">animation:getWidth</a>&nbsp;()</td>
+	<td class="summary">Get the width of the current frame </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:play">animation:play</a>&nbsp;()</td>
+	<td class="summary">Play the animation Starts it if it was stopped.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:reset">animation:reset</a>&nbsp;()</td>
+	<td class="summary">Reset Go back to the first frame.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:seek">animation:seek</a>&nbsp;(frame)</td>
+	<td class="summary">Seek to a frame </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:setDelay">animation:setDelay</a>&nbsp;(frame, delay)</td>
+	<td class="summary">Set the delay between frames </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:setMode">animation:setMode</a>&nbsp;(mode)</td>
+	<td class="summary">Set the play mode Could be "loop" to loop it, "once" to play it once, or "bounce" to play it, reverse it, and play it again (looping) </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:setSpeed">animation:setSpeed</a>&nbsp;(speed)</td>
+	<td class="summary">Set the speed </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:stop">animation:stop</a>&nbsp;()</td>
+	<td class="summary">Stop the animation </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#animation:update">animation:update</a>&nbsp;(dt)</td>
+	<td class="summary">Update the animation </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#newAnimation">newAnimation</a>&nbsp;(image, fw, fh, delay, frames)</td>
+	<td class="summary">Create a new animation Replaces love.graphics.newAnimation </td>
+	</tr>
+
+</table>
+
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="animation:addFrame"></a><strong>animation:addFrame</strong>&nbsp;(x, y, w, h, delay)</dt>
+<dd>
+Add a frame
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: The X coordinate of the frame on the original image
+	</li>
+	
+	<li>
+	  y: The Y coordinate of the frame on the original image
+	</li>
+	
+	<li>
+	  w: The width of the frame
+	</li>
+	
+	<li>
+	  h: The height of the frame
+	</li>
+	
+	<li>
+	  delay: The delay before the next frame is shown
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:draw"></a><strong>animation:draw</strong>&nbsp;(x, y, angle, sx, sy, ox, oy)</dt>
+<dd>
+Draw the animation
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: The X coordinate
+	</li>
+	
+	<li>
+	  y: The Y coordinate
+	</li>
+	
+	<li>
+	  angle: The angle to draw at (radians)
+	</li>
+	
+	<li>
+	  sx: The scale on the X axis
+	</li>
+	
+	<li>
+	  sy: The scale on the Y axis
+	</li>
+	
+	<li>
+	  ox: The X coordinate of the origin
+	</li>
+	
+	<li>
+	  oy: The Y coordinate of the origin
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:getCurrentFrame"></a><strong>animation:getCurrentFrame</strong>&nbsp;()</dt>
+<dd>
+Get the currently shown frame
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+The current frame
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:getHeight"></a><strong>animation:getHeight</strong>&nbsp;()</dt>
+<dd>
+Get the height of the current frame
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+The height of the current frame
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:getSize"></a><strong>animation:getSize</strong>&nbsp;()</dt>
+<dd>
+Get the number of frames
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+The number of frames
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:getWidth"></a><strong>animation:getWidth</strong>&nbsp;()</dt>
+<dd>
+Get the width of the current frame
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+The width of the current frame
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:play"></a><strong>animation:play</strong>&nbsp;()</dt>
+<dd>
+Play the animation Starts it if it was stopped. Basically makes sure it uses the delays to switch to the next frame.
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:reset"></a><strong>animation:reset</strong>&nbsp;()</dt>
+<dd>
+Reset Go back to the first frame.
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:seek"></a><strong>animation:seek</strong>&nbsp;(frame)</dt>
+<dd>
+Seek to a frame
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  frame: The frame to display now
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:setDelay"></a><strong>animation:setDelay</strong>&nbsp;(frame, delay)</dt>
+<dd>
+Set the delay between frames
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  frame: Which frame to set the delay for
+	</li>
+	
+	<li>
+	  delay: The delay
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:setMode"></a><strong>animation:setMode</strong>&nbsp;(mode)</dt>
+<dd>
+Set the play mode Could be "loop" to loop it, "once" to play it once, or "bounce" to play it, reverse it, and play it again (looping)
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  mode: The mode: one of the above
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:setSpeed"></a><strong>animation:setSpeed</strong>&nbsp;(speed)</dt>
+<dd>
+Set the speed
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  speed: The speed to play at (1 is normal, 2 is double, etc)
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:stop"></a><strong>animation:stop</strong>&nbsp;()</dt>
+<dd>
+Stop the animation
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="animation:update"></a><strong>animation:update</strong>&nbsp;(dt)</dt>
+<dd>
+Update the animation
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  dt: Time that has passed since last call
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="newAnimation"></a><strong>newAnimation</strong>&nbsp;(image, fw, fh, delay, frames)</dt>
+<dd>
+Create a new animation Replaces love.graphics.newAnimation
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  image: The image that contains the frames
+	</li>
+	
+	<li>
+	  fw: The frame width
+	</li>
+	
+	<li>
+	  fh: The frame height
+	</li>
+	
+	<li>
+	  delay: The delay between two frames
+	</li>
+	
+	<li>
+	  frames: The number of frames, 0 for autodetect
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+The created animation
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>
