@@ -287,6 +287,7 @@ local udpServer = {}
 udpServer._implemented = true
 
 function udpServer:createSocket()
+	self._ports = {}
 	self.socket = socket.udp()
 	self.socket:settimeout(0)
 end
@@ -307,7 +308,7 @@ function udpServer:send(data, clientid)
 end
 
 function udpServer:receive()
-	local data, ip, port = self:receivefrom()
+	local data, ip, port = self.socket:receivefrom()
 	if data then
 		if not self._ports[ip] then
 			self._ports[ip] = port
