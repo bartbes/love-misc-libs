@@ -261,7 +261,7 @@ function udpClient:_connect()
 	return true
 end
 
-function udpClient:_diconnect()
+function udpClient:_disconnect()
 	-- Well, that's easy.
 end
 
@@ -345,7 +345,7 @@ function tcpClient:_send(data)
 	return self.socket:send(data)
 end
 
-function tcpClient:_recive()
+function tcpClient:_receive()
 	return self.socket:receive()
 end
 
