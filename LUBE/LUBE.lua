@@ -80,10 +80,11 @@ function client:connect(host, port, dns)
 	end
 	-- Resolve dns if needed (dns is true by default).
 	if dns ~= false then
-		host = socket.dns.toip(host)
-		if not host then
+		local ip = socket.dns.toip(host)
+		if not ip then
 			return false, "DNS lookup failed for " .. host
 		end
+		host = ip
 	end
 	-- Set it up for our new connection.
 	self:createSocket()
