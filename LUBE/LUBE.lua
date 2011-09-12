@@ -393,7 +393,7 @@ function tcpServer:receive()
 			packet = packet .. partial
 		end
 		if packet ~= "" then
-			return data, sock
+			return packet, sock
 		end
 	end
 	for i, sock in pairs(self._socks) do
