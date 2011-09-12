@@ -334,7 +334,7 @@ end
 function tcpClient:_connect()
 	self.socket:settimeout(5)
 	local success, err = self.socket:connect(self.host, self.port)
-	self.sock:settimeout(0)
+	self.socket:settimeout(0)
 	return success, err
 end
 
@@ -383,8 +383,16 @@ end
 
 function tcpServer:receive()
 	for sock, _ in pairs(self.clients) do
-		local data = sock:receive()
-		if data then
+		local packet = ""
+		local data, _, partial = sock:receive(8192)
+		while data do
+			packet = packet .. data
+			data, _, partial = sock:receive(8192)
+		end
+		if not data and partial then
+			packet = packet .. partial
+		end
+		if packet ~= "" then
 			return data, sock
 		end
 	end
@@ -401,6 +409,7 @@ end
 function tcpServer:accept()
 	local sock = self.socket:accept()
 	while sock do
+		sock:settimeout(0)
 		self._socks[#self._socks+1] = sock
 		sock = self.socket:accept()
 	end
