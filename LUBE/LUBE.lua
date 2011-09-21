@@ -164,6 +164,8 @@ local server = {}
 -- Note that all functions should have a 0 timeout.
 
 function server:init()
+	assert(self._implemented, "Can't use a generic server object directly, please provide an implementation.")
+	-- 'Initialize' our variables
 	-- Some more initialization.
 	self.clients = {}
 	self.handshake = nil
@@ -288,7 +290,6 @@ local udpServer = {}
 udpServer._implemented = true
 
 function udpServer:createSocket()
-	self._ports = {}
 	self.socket = socket.udp()
 	self.socket:settimeout(0)
 end
@@ -298,12 +299,14 @@ function udpServer:_listen()
 end
 
 function udpServer:send(data, clientid)
-	-- We conviently use the ip as clientid.
+	-- We conviently use ip:port as clientid.
 	if clientid then
-		self.socket:sendto(data, clientid, self._ports[clientid])
+		local ip, port = clientid:match("^(.-):(%d+)$")
+		self.socket:sendto(data, ip, tonumber(port))
 	else
-		for ip, _ in pairs(self.clients) do
-			self.socket:sendto(data, ip, self._ports[ip])
+		for clientid, _ in pairs(self.clients) do
+			local ip, port = clientid:match("^(.-):(%d+)$")
+			self.socket:sendto(data, ip, tonumber(port))
 		end
 	end
 end
@@ -311,10 +314,8 @@ end
 function udpServer:receive()
 	local data, ip, port = self.socket:receivefrom()
 	if data then
-		if not self._ports[ip] then
-			self._ports[ip] = port
-		end
-		return data, ip
+		local id = ip .. ":" .. port
+		return data, id
 	end
 	return nil, "No message."
 end
