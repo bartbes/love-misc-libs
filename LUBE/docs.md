@@ -2,10 +2,12 @@
 
 * [Introduction][intro]
 * [Client][client]
+	* [Callbacks][clientcb]
 	* [Client Implementations][clientimpl]
 * [Server][server]
-	* [Server Implementations][serverimpl]
 	* [Client IDs][clientid]
+	* [Callbacks][servercb]
+	* [Server Implementations][serverimpl]
 
 LUBE has recently switched to being class based, and to do that while still providing the users with freedom, it uses [Class Commons][classcommons].
 This means that to use LUBE, you will need to use a [Class Commons][classcommons]-compatible class library.
@@ -52,6 +54,13 @@ The client class, lube.Client, defines the following set of functions (or expect
 	* option: One of:
 		* "broadcast": Allow connectivity with broadcast addresses, may fail.
 
+### <a id="clientcb"/> Callbacks ###
+
+You can set your callback functions in the callbacks table, there is 1 callback:
+
+* *client.callbacks.recv(data)*  
+	When the server sends data.
+
 ### <a id="clientimpl"/> Client Implementations ###
 
 At the moment LUBE ships with 2 client implementations (but it can of course be extended by subclassing lube.Client).
@@ -91,7 +100,28 @@ The server class, lube.Server, defines the following set of functions (or expect
 	* clientid: The id associated to the client (see the [Client IDs][clientid] section).
 * *server:accept()*  
 	**INTERNAL**
+* *server:createSocket()*  
+	**INTERNAL**
 
+### <a id="clientid"/> Client IDs ###
+
+Client IDs are implementation defined, and they should just be passed along without the code caring what it is.
+However, for those interested, udp currently uses the client's ip and port (in ip:port format), and tcp uses the socket object.  
+Once again, **do not**, *do not* use this info if you want stable code.  
+
+A client id is defined as nothing more but what the implementation can use to identify a client.
+
+### <a id="servercb"/> Callbacks ###
+
+You can set your callback functions in the callbacks table, there are 3 callbacks:
+
+* *server.callbacks.recv(data, clientid)*  
+	When a client sends data.
+* *server.callbacks.connect(clientid)*  
+	When a client connects.
+* *server.callbacks.disconnect(clientid)*  
+	When a client disconnects.
+  
 ### <a id="serverimpl"/> Server Implementations ###
 
 LUBE ships with 2 server implementations (more can of course be added).
@@ -100,18 +130,13 @@ These are:
 * lube.udpServer: The normal one, matches udpClient, just udp.
 * lube.tcpServer: And the tcp version, matches tcpClient, just tcp.
 
-### <a id="clientid"/> Client IDs ###
-
-Client IDs are implementation defined, and they should just be passed along without the code caring what it is.
-However, for those interested, udp currently uses the client's ip and port (in ip:port format), and tcp uses the socket object.  
-Once again, **do not**, *do not* use this info if you want stable code.  
-  
-A client id is defined as nothing more but what the implementation can use to identify a client.
-
 [intro]: #intro
 [client]: #client
+[clientcb]: #clientcb
 [clientimpl]: #clientimpl
 [server]: #server
-[serverimpl]: #serverimpl
 [clientid]: #clientid
+[servercb]: #servercb
+[serverimpl]: #serverimpl
+
 [classcommons]: https://github.com/bartbes/Class-Commons
