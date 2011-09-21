@@ -238,9 +238,9 @@ function server:update(dt)
 		for i, v in pairs(self.clients) do
 			v.ping = v.ping + dt
 			if v.ping > self.ping.time then
-				self.clients[clientid] = nil
+				self.clients[i] = nil
 				if self.callbacks.disconnect then
-					self.callbacks.disconnect(clientid)
+					self.callbacks.disconnect(i)
 				end
 			end
 		end
