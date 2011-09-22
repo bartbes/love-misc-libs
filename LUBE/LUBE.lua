@@ -100,13 +100,14 @@ function client:connect(host, port, dns)
 	self.connected = true
 	-- Send our handshake if we have one.
 	if self.handshake then
-		self:send(self.handshake)
+		self:send(self.handshake .. "+")
 	end
 	return true
 end
 
 function client:disconnect()
 	if self.connected then
+		self:send(self.handshake .. "-")
 		self:_disconnect()
 		self.host = nil
 		self.port = nil
@@ -205,18 +206,20 @@ function server:update(dt)
 	-- Start handling messages.
 	local data, clientid = self:receive()
 	while data do
-		if data == self.handshake then
-			-- If we already knew the client, it disconnected,
-			-- otherwise it connected.
+		if data == self.handshake .. "+" then
+			-- If we already knew the client, ignore.
+			if not self.clients[clientid] then
+				self.clients[clientid] = {ping = -dt}
+				if self.callbacks.connect then
+					self.callbacks.connect(clientid)
+				end
+			end
+		elseif data == self.handshake .. "-" then
+			-- Ignore unknown clients (perhaps they timed out before?).
 			if self.clients[clientid] then
 				self.clients[clientid] = nil
 				if self.callbacks.disconnect then
 					self.callbacks.disconnect(clientid)
-				end
-			else
-				self.clients[clientid] = {ping = -dt}
-				if self.callbacks.connect then
-					self.callbacks.connect(clientid)
 				end
 			end
 		elseif not self.ping or data ~= self.ping.msg then
@@ -399,7 +402,7 @@ function tcpServer:receive()
 	end
 	for i, sock in pairs(self._socks) do
 		local data = sock:receive()
-		if data and data == self.handshake then
+		if data and data == self.handshake .. "-" then
 			self._socks[i] = nil
 			return data, sock
 		end
