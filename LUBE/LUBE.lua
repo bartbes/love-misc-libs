@@ -402,7 +402,7 @@ function tcpServer:receive()
 	end
 	for i, sock in pairs(self._socks) do
 		local data = sock:receive()
-		if data and data == self.handshake .. "-" then
+		if data and data == self.handshake .. "+" then
 			self._socks[i] = nil
 			return data, sock
 		end
