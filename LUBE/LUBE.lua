@@ -100,14 +100,14 @@ function client:connect(host, port, dns)
 	self.connected = true
 	-- Send our handshake if we have one.
 	if self.handshake then
-		self:send(self.handshake .. "+")
+		self:send(self.handshake .. "+\n")
 	end
 	return true
 end
 
 function client:disconnect()
 	if self.connected then
-		self:send(self.handshake .. "-")
+		self:send(self.handshake .. "-\n")
 		self:_disconnect()
 		self.host = nil
 		self.port = nil
@@ -206,7 +206,8 @@ function server:update(dt)
 	-- Start handling messages.
 	local data, clientid = self:receive()
 	while data do
-		if data == self.handshake .. "+" then
+		local hs, conn == data:match("^(.+)[%+%-]\n?$")
+		if hs == self.handshake and conn == "+" then
 			-- If we already knew the client, ignore.
 			if not self.clients[clientid] then
 				self.clients[clientid] = {ping = -dt}
@@ -214,7 +215,7 @@ function server:update(dt)
 					self.callbacks.connect(clientid)
 				end
 			end
-		elseif data == self.handshake .. "-" then
+		elseif hs == self.handshake and conn == "-" then
 			-- Ignore unknown clients (perhaps they timed out before?).
 			if self.clients[clientid] then
 				self.clients[clientid] = nil
@@ -351,48 +352,60 @@ function tcpClient:_send(data)
 end
 
 function tcpClient:_receive()
-	return self.socket:receive()
+	local packet = ""
+	local data, _, partial = sock:receive(8192)
+	while data do
+		packet = packet .. data
+		data, _, partial = sock:receive(8192)
+	end
+	if not data and partial then
+		packet = packet .. partial
+	end
+	if packet ~= "" then
+		return packet, sock
+	end
+	return nil, "No messages"
 end
 
 function tcpClient:setoption(option, value)
-	if option == "broadcast" then
-		self.socket:setoption("broadcast", not not value)
-	end
+if option == "broadcast" then
+	self.socket:setoption("broadcast", not not value)
+end
 end
 
 local tcpServer = {}
 tcpServer._implemented = true
 
 function tcpServer:createSocket()
-	self._socks = {}
-	self.socket = socket.tcp()
-	self.socket:settimeout(0)
+self._socks = {}
+self.socket = socket.tcp()
+self.socket:settimeout(0)
 end
 
 function tcpServer:_listen()
-	self.socket:bind("*", self.port)
-	self.socket:listen(5)
+self.socket:bind("*", self.port)
+self.socket:listen(5)
 end
 
 function tcpServer:send(data, clientid)
-	-- This time, the clientip is the client socket.
-	if clientid then
-		clientid:send(data)
-	else
-		for sock, _ in pairs(self.clients) do
-			sock:send(data)
-		end
+-- This time, the clientip is the client socket.
+if clientid then
+	clientid:send(data)
+else
+	for sock, _ in pairs(self.clients) do
+		sock:send(data)
 	end
+end
 end
 
 function tcpServer:receive()
-	for sock, _ in pairs(self.clients) do
-		local packet = ""
-		local data, _, partial = sock:receive(8192)
-		while data do
-			packet = packet .. data
-			data, _, partial = sock:receive(8192)
-		end
+for sock, _ in pairs(self.clients) do
+	local packet = ""
+	local data, _, partial = sock:receive(8192)
+	while data do
+		packet = packet .. data
+		data, _, partial = sock:receive(8192)
+	end
 		if not data and partial then
 			packet = packet .. partial
 		end
@@ -402,9 +415,12 @@ function tcpServer:receive()
 	end
 	for i, sock in pairs(self._socks) do
 		local data = sock:receive()
-		if data and data == self.handshake .. "+" then
-			self._socks[i] = nil
-			return data, sock
+		if data then
+			local hs, conn == data:match("^(.+)[%+%-]\n?$")
+			if hs == self.handshake and conn ==  "+" then
+				self._socks[i] = nil
+				return data, sock
+			end
 		end
 	end
 	return nil, "No messages."
