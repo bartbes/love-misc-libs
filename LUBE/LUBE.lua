@@ -206,7 +206,7 @@ function server:update(dt)
 	-- Start handling messages.
 	local data, clientid = self:receive()
 	while data do
-		local hs, conn == data:match("^(.+)[%+%-]\n?$")
+		local hs, conn = data:match("^(.+)[%+%-]\n?$")
 		if hs == self.handshake and conn == "+" then
 			-- If we already knew the client, ignore.
 			if not self.clients[clientid] then
@@ -416,7 +416,7 @@ for sock, _ in pairs(self.clients) do
 	for i, sock in pairs(self._socks) do
 		local data = sock:receive()
 		if data then
-			local hs, conn == data:match("^(.+)[%+%-]\n?$")
+			local hs, conn = data:match("^(.+)[%+%-]\n?$")
 			if hs == self.handshake and conn ==  "+" then
 				self._socks[i] = nil
 				return data, sock
