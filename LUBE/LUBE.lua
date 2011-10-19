@@ -380,6 +380,7 @@ function tcpServer:createSocket()
 	self._socks = {}
 	self.socket = socket.tcp()
 	self.socket:settimeout(0)
+	self.socket:setoption("reuseaddr", true)
 end
 
 function tcpServer:_listen()
