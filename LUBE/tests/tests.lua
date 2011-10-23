@@ -393,12 +393,11 @@ ImplTest("Tcp client send", function()
 	local c = serv:accept()
 	c:receive()
 
-	client:send("hellothere\n")
+	client:send("hellothere")
 
-	local msg = c:receive()
+	local msg = c:receive(10)
 	log("Message: " .. msg)
-	assert(msg == "hellothere\n", "Weird luasocket thing, unsolved bug") --so.. what goes wrong here?
-	--it's something odd with luasocket
+	assert(msg == "hellothere")
 end)
 
 ImplTest("Udp client send", function()
