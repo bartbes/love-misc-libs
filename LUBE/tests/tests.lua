@@ -51,6 +51,9 @@ class "lube.testServer" ("lube.Server") {
 	receive = function(self)
 		local msg = self.received
 		self.received = nil
+		if not msg then
+			return nil
+		end
 		return msg.data, msg.clientid
 	end,
 
@@ -140,6 +143,65 @@ UnitTest("Client recv callback", function()
 	end
 
 	client:update(5)
+
+	assert(called)
+end)
+
+UnitTest("Server connect callback", function()
+	local server = lube.testServer()
+	server.handshake = "handshake"
+	server:listen(9797)
+
+	local called = false
+	local clientid = math.random(0, 55)
+	server.callbacks.connect = function(id)
+		called = true
+		assert(id == clientid)
+	end
+
+	server.received = { data = server.handshake .. "+\n", clientid = clientid }
+	server:update(5)
+
+	assert(called)
+end)
+
+UnitTest("Server disconnect callback", function()
+	local server = lube.testServer()
+	server.handshake = "handshake"
+	server:listen(9797)
+
+	local called = false
+	local clientid = math.random(0, 55)
+	server.callbacks.disconnect = function(id)
+		called = true
+		assert(id == clientid)
+	end
+
+	server.received = { data = server.handshake .. "+\n", clientid = clientid }
+	server:update(5)
+	server.received = { data = server.handshake .. "-\n", clientid = clientid }
+	server:update(5)
+
+	assert(called)
+end)
+
+UnitTest("Server recv callback", function()
+	local server = lube.testServer()
+	server.handshake = "handshake"
+	server:listen(9797)
+
+	local called = false
+	local clientid = math.random(0, 55)
+	server.callbacks.recv = function(data, id)
+		called = true
+		assert(id == clientid)
+		assert(data == "hellothere")
+	end
+
+	server.received = { data = server.handshake .. "+\n", clientid = clientid }
+	server:update(5)
+	server.received = { data = "hellothere", clientid = clientid }
+	server:update(5)
 
 	assert(called)
 end)

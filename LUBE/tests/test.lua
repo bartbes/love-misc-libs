@@ -9,7 +9,7 @@ local testtypes = {
 }
 
 local mt = {}
-mt.__index = {require = require, io = io, print = print, assert = assert, error = error, pcall = pcall, lube = lube, socket = socket}
+mt.__index = {require = require, io = io, print = print, assert = assert, error = error, pcall = pcall, math = math, lube = lube, socket = socket}
 
 class "Test" {
 	__init__ = function(self, name, func)
@@ -56,6 +56,7 @@ end
 
 local testlist = testtypes[args[1]] or tests
 local succeeded = 0
+local failed = {}
 
 for i, v in ipairs(testlist) do
 	print(v.name .. ":")
@@ -66,6 +67,7 @@ for i, v in ipairs(testlist) do
 		print("SUCCESS")
 	else
 		print("FAIL: " .. err)
+		table.insert(failed, v.name)
 	end
 	collectgarbage("collect")
 end
@@ -73,3 +75,7 @@ end
 print()
 print(("Failures: %d"):format(#testlist-succeeded))
 print(("Success rate: %0.2d%%"):format((succeeded/#testlist)*100))
+print("Failed tests:")
+for i, v in ipairs(failed) do
+	print("  " .. v)
+end
