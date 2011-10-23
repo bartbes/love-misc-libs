@@ -363,6 +363,7 @@ ImplTest("Udp client recv callback", function()
 	local _, ip, port = serv:receivefrom()
 	log(("Message from %s:%d"):format(ip, port))
 	serv:sendto("hellothere", ip, port)
+	socket.sleep(0.1)
 
 	local called = false
 	client.callbacks.recv = function(data)
@@ -387,6 +388,7 @@ ImplTest("Udp client receive", function()
 	local _, ip, port = serv:receivefrom()
 	log(("Message from %s:%d"):format(ip, port))
 	serv:sendto("hellothere", ip, port)
+	socket.sleep(0.1)
 
 	local msg = client:receive()
 	log("Message: " .. msg)
@@ -407,6 +409,7 @@ ImplTest("Tcp client recv callback", function()
 	local c = serv:accept()
 
 	c:send("hellothere")
+	socket.sleep(0.1)
 
 	local called = false
 	client.callbacks.recv = function(data)
@@ -433,6 +436,7 @@ ImplTest("Tcp client receive", function()
 	local c = serv:accept()
 
 	c:send("hellothere")
+	socket.sleep(0.1)
 
 	local msg = client:receive()
 	log("Message: " .. msg)
