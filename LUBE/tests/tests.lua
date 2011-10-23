@@ -206,6 +206,66 @@ UnitTest("Server recv callback", function()
 	assert(called)
 end)
 
+UnitTest("Client ping", function()
+	local client = lube.testClient()
+	client:setPing(true, 2, "ping")
+	client:connect("127.0.0.1", 9797, false)
+
+	client:update(3)
+
+	assert(client.sent == "ping")
+end)
+
+UnitTest("Server ping", function()
+	local server = lube.testServer()
+	server.handshake = "handshake"
+	server:setPing(true, 2, "ping")
+	server:listen(9797)
+
+	local called = false
+	server.callbacks.disconnect = function(id)
+		assert(id == 1)
+		called = true
+	end
+
+	server.received = { data = server.handshake .. "+\n", clientid = 1 }
+	server:update(0.1)
+
+	--shouldn't time out yet
+	server:update(1)
+	assert(not called)
+
+	--should time out
+	server:update(5)
+	assert(called)
+end)
+
+UnitTest("Server generic ping", function()
+	local server = lube.testServer()
+	server.handshake = "handshake"
+	server:setPing(true, 2, "ping")
+	server:listen(9797)
+
+	local called = false
+	server.callbacks.disconnect = function(id)
+		assert(id == 1)
+		called = true
+	end
+
+	server.received = { data = server.handshake .. "+\n", clientid = 1 }
+	server:update(0.1)
+
+	--shouldn't time out yet
+	server:update(1)
+	assert(not called)
+
+	server.received = { data = "somethingrandom", clientid = 1 }
+
+	--shouldn't time out either
+	server:update(5)
+	assert(not called)
+end)
+
 ImplTest("Udp client connect handshake", function()
 	local serv = socket.udp()
 	serv:setsockname("*", 9797)
