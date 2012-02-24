@@ -53,6 +53,9 @@ The client class, lube.Client, defines the following set of functions (or expect
 	Set an option for this socket.
 	* option: One of:
 		* "broadcast": Allow connectivity with broadcast addresses, may fail.
+* *client.handshake*  
+	Used in connect/disconnect messages, should match the server's.  
+	**WARNING**: The handshake shouldn't occur in normal (other) messages.
 
 ### <a id="clientcb"/> Callbacks ###
 
@@ -102,6 +105,9 @@ The server class, lube.Server, defines the following set of functions (or expect
 	**INTERNAL**
 * *server:createSocket()*  
 	**INTERNAL**
+* *server.handshake*  
+	Used in connect/disconnect messages, should match the client's.  
+	**WARNING**: The handshake shouldn't occur in normal (other) messages.
 
 ### <a id="clientid"/> Client IDs ###
 
