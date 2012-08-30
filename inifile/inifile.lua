@@ -28,21 +28,32 @@
 
 inifile = {}
 
-local lines
-local write
+local defaultBackend = "io"
+
+local backends = {
+	io = {
+		lines = function(name) return assert(io.open(name)):lines() end,
+		write = function(name, contents) assert(io.open(name, "w")):write(contents) end,
+	},
+	memory = {
+		lines = function(text) return text:gmatch("([^\r\n]+)\r?\n") end,
+		write = function(name, contents) return contents end,
+	},
+}
 
 if love then
-	lines = love.filesystem.lines
-	write = love.filesystem.write
-else
-	lines = function(name) return assert(io.open(name)):lines() end
-	write = function(name, contents) return assert(io.open(name, "w")):write(contents) end
+	backends.love = {
+		lines = love.filesystem.lines,
+		write = function(name, contents) love.filesystem.write(name, contents) end,
+	}
+	defaultBackend = "love"
 end
 
-function inifile.parse(name)
+function inifile.parse(name, backend)
+	backend = backend or defaultBackend
 	local t = {}
 	local section
-	for line in lines(name) do
+	for line in backends[backend].lines(name) do
 		local s = line:match("^%[([^%]]+)%]$")
 		if s then
 			section = s
@@ -59,7 +70,8 @@ function inifile.parse(name)
 	return t
 end
 
-function inifile.save(name, t)
+function inifile.save(name, t, backend)
+	backend = backend or defaultBackend
 	local contents = ""
 	for section, s in pairs(t) do
 		local sec = ("[%s]\n"):format(section)
@@ -68,7 +80,7 @@ function inifile.save(name, t)
 		end
 		contents = contents .. sec .. "\n"
 	end
-	write(name, contents)
+	return backends[backend].write(name, contents)
 end
 
 return inifile
