@@ -63,7 +63,7 @@ function inifile.parse(name, backend)
 		if tonumber(value) then value = tonumber(value) end
 		if value == "true" then value = true end
 		if value == "false" then value = false end
-		if key and value then
+		if key and value ~= nil then
 			t[section][key] = value
 		end
 	end
