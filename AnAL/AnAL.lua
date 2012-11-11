@@ -89,15 +89,8 @@ function animation:update(dt)
 end
 
 --- Draw the animation
--- @param x The X coordinate
--- @param y The Y coordinate
--- @param angle The angle to draw at (radians)
--- @param sx The scale on the X axis
--- @param sy The scale on the Y axis
--- @param ox The X coordinate of the origin
--- @param oy The Y coordinate of the origin
-function animation:draw(x, y, angle, sx, sy, ox, oy)
-	love.graphics.drawq(self.img, self.frames[self.position], x, y, angle, sx, sy, ox, oy)
+function animation:draw(...)
+	love.graphics.drawq(self.img, self.frames[self.position], ...)
 end
 
 --- Add a frame
