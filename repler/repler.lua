@@ -24,8 +24,6 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ]]
 
-local t
-
 local function sprint(...)
 	local args = {...}
 	for i, v in ipairs(args) do
@@ -57,7 +55,7 @@ local function doExecute(command)
 end
 
 local function load()
-	t = love.thread.newThread("repler-thread",
+	local t = love.thread.newThread("repler-thread",
 		love.filesystem.newFileData(
 		[[
 			require "love.event"
@@ -70,6 +68,7 @@ local function load()
 			t = love.thread.getThread()
 			repeat
 				local command = prompt()
+				if not command then break end
 				love.event.push("repler", t, command)
 				local result = t:demand("result")
 				if #result > 0 then
