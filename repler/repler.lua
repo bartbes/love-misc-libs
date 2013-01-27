@@ -62,6 +62,7 @@ local function load()
 
 			function prompt()
 				io.write("> ")
+				io.flush()
 				return io.read("*l")
 			end
 
