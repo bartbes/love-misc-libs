@@ -1,4 +1,4 @@
--- Copyright 2011 Bart van Strien. All rights reserved.
+-- Copyright 2011-2013 Bart van Strien. All rights reserved.
 -- 
 -- Redistribution and use in source and binary forms, with or without modification, are
 -- permitted provided that the following conditions are met:
@@ -53,34 +53,116 @@ function inifile.parse(name, backend)
 	backend = backend or defaultBackend
 	local t = {}
 	local section
+	local comments = {}
+	local sectionorder = {}
+	local cursectionorder
+
 	for line in backends[backend].lines(name) do
+
+		-- Section headers
 		local s = line:match("^%[([^%]]+)%]$")
 		if s then
 			section = s
 			t[section] = t[section] or {}
+			cursectionorder = {name = section}
+			table.insert(sectionorder, cursectionorder)
 		end
+
+		-- Comments
+		s = line:match("^;(.+)$")
+		if s then
+			local commentsection = section or comments
+			comments[commentsection] = comments[commentsection] or {}
+			table.insert(comments[commentsection], s)
+		end
+
+		-- Key-value pairs
 		local key, value = line:match("^(%w+)%s-=%s-(.+)$")
 		if tonumber(value) then value = tonumber(value) end
 		if value == "true" then value = true end
 		if value == "false" then value = false end
 		if key and value ~= nil then
 			t[section][key] = value
+			table.insert(cursectionorder, key)
 		end
 	end
-	return t
+
+	-- Store our metadata in the __inifile field in the metatable
+	return setmetatable(t, {
+		__inifile = {
+			comments = comments,
+			sectionorder = sectionorder,
+		}
+	})
 end
 
 function inifile.save(name, t, backend)
 	backend = backend or defaultBackend
-	local contents = ""
-	for section, s in pairs(t) do
-		local sec = ("[%s]\n"):format(section)
-		for key, value in pairs(s) do
-			sec = sec .. ("%s=%s\n"):format(key, tostring(value))
-		end
-		contents = contents .. sec .. "\n"
+	local contents = {}
+
+	-- Get our metadata if it exists
+	local metadata = getmetatable(t)
+	local comments, sectionorder
+
+	if metadata then metadata = metadata.__inifile end
+	if metadata then
+		comments = metadata.comments
+		sectionorder = metadata.sectionorder
 	end
-	return backends[backend].write(name, contents)
+
+	-- If there are comments before sections,
+	-- write them out now
+	if comments and comments[comments] then
+		for i, v in ipairs(comments[comments]) do
+			table.insert(contents, (";%s"):format(v))
+		end
+		table.insert(contents, "")
+	end
+
+	local function writevalue(section, key)
+		local value = section[key]
+		table.insert(contents, ("%s=%s"):format(key, tostring(value)))
+	end
+
+	local function writesection(section, order)
+		local s = t[section]
+		table.insert(contents, ("[%s]"):format(section))
+
+		-- Write our comments out again, sadly we have only achieved
+		-- section-accuracy so far
+		if comments and comments[section] then
+			for i, v in ipairs(comments[section]) do
+				table.insert(contents, (";%s"):format(v))
+			end
+		end
+
+		-- Write the key-value pairs with optional order
+		if order then
+			for _, v in ipairs(order) do
+				writevalue(s, v)
+			end
+		else
+			for i, _ in pairs(s) do
+				writevalue(s, i)
+			end
+		end
+
+		-- Newline after the section
+		table.insert(contents, "")
+	end
+
+	-- Write the sections, with optional order
+	if sectionorder then
+		for _, v in ipairs(sectionorder) do
+			writesection(v.name, v)
+		end
+	else
+		for i, _ in pairs(contents) do
+			writesection(i)
+		end
+	end
+
+	return backends[backend].write(name, table.concat(contents, "\n"))
 end
 
 return inifile
