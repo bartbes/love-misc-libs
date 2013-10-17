@@ -174,8 +174,10 @@ end
 function animation:setMode(mode)
 	if mode == "loop" then
 		self.mode = 1
+		self.direction = 1
 	elseif mode == "once" then
 		self.mode = 2
+		self.direction = 1
 	elseif mode == "bounce" then
 		self.mode = 3
 	end
