@@ -121,11 +121,15 @@ function inifile.save(name, t, backend)
 
 	local function writevalue(section, key)
 		local value = section[key]
+		-- Discard if it doesn't exist (anymore)
+		if value == nil then return end
 		table.insert(contents, ("%s=%s"):format(key, tostring(value)))
 	end
 
 	local function writesection(section, order)
 		local s = t[section]
+		-- Discard if it doesn't exist (anymore)
+		if not s then return end
 		table.insert(contents, ("[%s]"):format(section))
 
 		-- Write our comments out again, sadly we have only achieved
@@ -137,12 +141,15 @@ function inifile.save(name, t, backend)
 		end
 
 		-- Write the key-value pairs with optional order
+		local done = {}
 		if order then
 			for _, v in ipairs(order) do
+				done[v] = true
 				writevalue(s, v)
 			end
-		else
-			for i, _ in pairs(s) do
+		end
+		for i, _ in pairs(s) do
+			if not done[i] then
 				writevalue(s, i)
 			end
 		end
@@ -152,12 +159,16 @@ function inifile.save(name, t, backend)
 	end
 
 	-- Write the sections, with optional order
+	local done = {}
 	if sectionorder then
 		for _, v in ipairs(sectionorder) do
+			done[v.name] = true
 			writesection(v.name, v)
 		end
-	else
-		for i, _ in pairs(contents) do
+	end
+	-- Write anything that wasn't ordered
+	for i, _ in pairs(t) do
+		if not done[i] then
 			writesection(i)
 		end
 	end
