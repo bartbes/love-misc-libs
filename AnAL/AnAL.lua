@@ -90,7 +90,7 @@ end
 
 --- Draw the animation
 function animation:draw(...)
-	love.graphics.drawq(self.img, self.frames[self.position], ...)
+	love.graphics.draw(self.img, self.frames[self.position], ...)
 end
 
 --- Add a frame
