@@ -84,6 +84,8 @@ function animation:update(dt)
 		elseif self.position < 1 and self.mode == 3 then
 			self.direction = 1
 			self.position = self.position + 1
+		elseif self.position < 1 and self.mode == 4 then
+			self.position = #self.frames
 		end
 	end
 end
@@ -180,6 +182,9 @@ function animation:setMode(mode)
 		self.direction = 1
 	elseif mode == "bounce" then
 		self.mode = 3
+	elseif mode == "reverse" then
+		self.mode = 4
+		self.direction = -1
 	end
 end
 
