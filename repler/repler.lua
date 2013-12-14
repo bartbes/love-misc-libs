@@ -54,39 +54,81 @@ local function doExecute(command)
 	end
 end
 
-local function load()
-	local t = love.thread.newThread("repler-thread",
-		love.filesystem.newFileData(
-		[[
-			require "love.event"
+local load
+if love.thread.newChannel then
+	local channel = love.thread.newChannel()
+	local threadcode = [[
+		local channel = ...
 
-			function prompt()
-				io.write("> ")
-				io.flush()
-				return io.read("*l")
-			end
+		require "love.thread"
+		require "love.event"
 
-			t = love.thread.getThread()
-			repeat
-				local command = prompt()
-				if not command then break end
-				love.event.push("repler", t, command)
-				local result = t:demand("result")
-				if #result > 0 then
-					print(result:sub(2, -1))
-				end
-			until infinity
-		]],
-		"replthread"))
-	love.handlers.repler = rawget(love.handlers, "repler") or function(thread, command)
-		local result = doExecute(command)
-		if result == nil then
-			t:set("result", "")
-		else
-			t:set("result", "\"" .. result)
+		function prompt()
+			io.write("> ")
+			io.flush()
+			return io.read("*l")
 		end
+
+		repeat
+			local command = prompt()
+			if not command then break end
+
+			love.event.push("repler", command)
+			local result = channel:demand()
+			if #result > 0 then
+				print(result:sub(2, -1))
+			end
+		until infinity
+	]]
+
+	function load()
+		local t = love.thread.newThread(
+			love.filesystem.newFileData(threadcode, "replthread"))
+		love.handlers.repler = rawget(love.handlers, "repler") or function(command)
+			local result = doExecute(command)
+			if result == nil then
+				channel:push("")
+			else
+				channel:push("\"" .. result)
+			end
+		end
+		t:start(channel)
 	end
-	t:start()
+else
+	local threadcode = [[
+		require "love.event"
+
+		function prompt()
+			io.write("> ")
+			io.flush()
+			return io.read("*l")
+		end
+
+		t = love.thread.getThread()
+		repeat
+			local command = prompt()
+			if not command then break end
+			love.event.push("repler", t, command)
+			local result = t:demand("result")
+			if #result > 0 then
+				print(result:sub(2, -1))
+			end
+		until infinity
+	]]
+
+	function load()
+		local t = love.thread.newThread("repler-thread",
+			love.filesystem.newFileData(threadcode,	"replthread"))
+		love.handlers.repler = rawget(love.handlers, "repler") or function(thread, command)
+			local result = doExecute(command)
+			if result == nil then
+				t:set("result", "")
+			else
+				t:set("result", "\"" .. result)
+			end
+		end
+		t:start()
+	end
 end
 
 return {load = load}

@@ -1,5 +1,5 @@
 --[[
-Copyright (c) 2009-2010 Bart Bes
+Copyright (c) 2009-2013 Bart Bes
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -89,8 +89,9 @@ function animation:update(dt)
 end
 
 --- Draw the animation
+local drawq = love.graphics.drawq or love.graphics.draw
 function animation:draw(...)
-	love.graphics.drawq(self.img, self.frames[self.position], ...)
+	return drawq(self.img, self.frames[self.position], ...)
 end
 
 --- Add a frame
@@ -121,7 +122,7 @@ end
 --- Reset
 -- Go back to the first frame.
 function animation:reset()
-	self:seek(1)
+	return self:seek(1)
 end
 
 --- Seek to a frame
@@ -190,9 +191,9 @@ if Animations_legacy_support then
 	local oldLGDraw = love.graphics.draw
 	function love.graphics.draw(item, ...)
 		if type(item) == "table" and item.draw then
-			item:draw(...)
+			return item:draw(...)
 		else
-			oldLGDraw(item, ...)
+			return oldLGDraw(item, ...)
 		end
 	end
 end
