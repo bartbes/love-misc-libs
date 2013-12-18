@@ -1,7 +1,7 @@
-local async = {}
+local async = { ensure = {} }
 
 local function threadfunc(...)
-	local requestChannel, returnChannel = ...
+	local definitionsChannel, requestChannel, returnChannel = ...
 
 	require "love.filesystem"
 
@@ -31,15 +31,28 @@ local function threadfunc(...)
 			end
 		end,
 
-		shutdown = function()
+		shutdown = function(amount)
 			keepRunning = false
-			requestChannel:push{"shutdown"}
+			if amount > 1 then
+				requestChannel:push{"shutdown", amount-1}
+			end
 		end,
 	}
 
 	local msg, command
 	while keepRunning do
 		msg = requestChannel:demand()
+
+		-- Update our definitions first
+		while true do
+			local defs = definitionsChannel:pop()
+			if not defs then break end
+			for i, v in pairs(defs) do
+				functions[i] = loadstring(v)
+			end
+		end
+
+		-- And only then handle the actual request
 		command = table.remove(msg, 1)
 		if interface[command] then
 			interface[command](unpack(msg))
@@ -50,29 +63,29 @@ local function threadfunc(...)
 end
 local threaddata = string.dump(threadfunc)
 
-local threads, requestChannel, returnChannel, nextid, cbregistry
+local threads, definitionsChannels,
+	requestChannel, returnChannel,
+	nextid, cbregistry,
+	functionregistry
 
 function async.load(numthreads)
 	requestChannel = love.thread.newChannel()
 	returnChannel = love.thread.newChannel()
 	nextid = 1
 	cbregistry = {}
+	functionregistry = {}
 
 	threads = {}
-	-- TODO At the moment we can only have one thread, because definitions
-	-- are thread-local, so we either need to find a way to send definitions
-	-- to each thread, or to share them appropriately
-	numthreads = 1
-	local thread
+	definitionsChannels = {}
+
+	numthreads = numthreads or 1
 	for i = 1, numthreads do
-		thread = love.thread.newThread(love.filesystem.newFileData(threaddata, "async.lua-thread"))
-		thread:start(requestChannel, returnChannel)
-		threads[i] = thread
+		async.addWorker()
 	end
 end
 
 function async.shutdown()
-	requestChannel:push{"shutdown"}
+	requestChannel:push{"shutdown", math.huge}
 	for i, v in ipairs(threads) do
 		v:wait()
 	end
@@ -80,11 +93,33 @@ function async.shutdown()
 	threads, requestChannel, returnChannel, cbregistry = nil, nil, nil, nil
 end
 
+function async.addWorker()
+	local thread, definitionsChannel
+	local id = #threads+1
+
+	thread = love.thread.newThread(love.filesystem.newFileData(threaddata, "async.lua-thread"))
+	definitionsChannel = love.thread.newChannel()
+
+	threads[id] = thread
+	definitionsChannels[id] = definitionsChannel
+
+	definitionsChannel:push(functionregistry)
+	thread:start(definitionsChannel, requestChannel, returnChannel)
+end
+
+function async.stopWorkers(amount)
+	requestChannel:push{"shutdown", amount}
+end
+
 function async.define(name, func)
 	local contents = string.dump(func)
 	assert(contents, "Could not dump function, did you use upvalues?")
 
-	requestChannel:push{"define", name, contents}
+	functionregistry[name] = contents
+
+	for i, v in ipairs(definitionsChannels) do
+		v:push{[name] = contents}
+	end
 
 	return function(cb, ...)
 		return async.call(cb, name, ...)
@@ -100,6 +135,14 @@ function async.call(callback, name, ...)
 end
 
 function async.update()
+	-- Clean up any shut down threads
+	for i = #threads, 1, -1 do
+		if not threads[i]:isRunning() then
+			table.remove(threads, i):wait()
+			table.remove(definitionsChannels, i)
+		end
+	end
+
 	local result = returnChannel:pop()
 	while result do
 		local id = table.remove(result, 1)
@@ -125,6 +168,32 @@ function async.update()
 
 		result = returnChannel:pop()
 	end
+end
+
+function async.getWorkerCount()
+	return #threads
+end
+
+function async.ensure.exactly(n)
+	async.ensure.atLeast(n).atMost(n)
+
+	return async.ensure
+end
+
+function async.ensure.atLeast(n)
+	for i = #threads+1, n do
+		async.addWorker()
+	end
+
+	return async.ensure
+end
+
+function async.ensure.atMost(n)
+	if n < #threads then
+		async.stopWorkers(n-#threads)
+	end
+
+	return async.ensure
 end
 
 return async
