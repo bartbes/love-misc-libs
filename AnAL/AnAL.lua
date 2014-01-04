@@ -160,13 +160,13 @@ end
 --- Get the width of the current frame
 -- @return The width of the current frame
 function animation:getWidth()
-	return self.frames[self.position]:getWidth()
+	return (select(3, self.frames[self.position]:getViewport()))
 end
 
 --- Get the height of the current frame
 -- @return The height of the current frame
 function animation:getHeight()
-	return self.frames[self.position]:getHeight()
+	return (select(4, self.frames[self.position]:getViewport()))
 end
 
 --- Set the play mode
