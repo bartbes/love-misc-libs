@@ -2,8 +2,13 @@
 local modulename = ...
 modulename = modulename:match("^(.+)%.init$") or modulename
 
-local function subrequire(sub)
-	return unpack(require(modulename .. "." .. sub))
+local function subrequire(sub, ...)
+	local t = require(modulename .. "." .. sub)
+	if (...) then
+		t = t(...)
+	end
+
+	return unpack(t)
 end
 
 -- Common Class fallback
@@ -53,7 +58,7 @@ if pcall(require, "enet") then
 	lube.enetServer = common.class("lube.enetServer", enetServer, lube.Server)
 end
 
-local udpPlusClient, udpPlusServer = subrequire("udpplus")(udpClient, udpServer)
+local udpPlusClient, udpPlusServer = subrequire("udpplus", udpClient, udpServer)
 lube.udpPlusClient = common.class("lube.udpPlusClient", udpPlusClient, lube.udpClient)
 lube.udpPlusServer = common.class("lube.udpPlusServer", udpPlusServer, lube.udpServer)
 
