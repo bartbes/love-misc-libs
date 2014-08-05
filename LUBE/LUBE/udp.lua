@@ -29,7 +29,7 @@ function udpClient:_receive()
 	if ip == self.host and port == self.port then
 		return data
 	end
-	return false, "Unknown remote sent data."
+	return false, data and "Unknown remote sent data." or ip
 end
 
 function udpClient:setOption(option, value)
