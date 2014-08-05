@@ -17,12 +17,12 @@ local function createPackets(data)
 	local packet = {startMarker .. escapeData(data)}
 
 	while true do
-		local overlimit = #packet[2]-udpPacketSizeLimit
+		local overlimit = #packet[1]-udpPacketSizeLimit
 		if overlimit <= 0 then break end
 
 		overlimit = overlimit%udpPacketSizeLimit
-		table.insert(packet, 3, packet[2]:sub(-overlimit))
-		packet[2] = packet[2]:sub(1, -overlimit-1)
+		table.insert(packet, 3, packet[1]:sub(-overlimit))
+		packet[1] = packet[1]:sub(1, -overlimit-1)
 	end
 
 	-- Our limit is rounded down, so we can spare the ending marker
@@ -35,11 +35,11 @@ local function getBufferedPacket(buffer)
 end
 
 local function containsBegin(data)
-	return data:find("^" .. startMarker) or data:find("[^" .. startMarker "]" .. startMarker)
+	return data:find("^" .. startMarker) or data:find("[^" .. startMarker .. "]" .. startMarker)
 end
 
 local function containsEnd(data)
-	return data:find("^" .. endMarker) or data:find("[^" .. endMarker "]" .. startMarker)
+	return data:find("^" .. endMarker) or data:find("[^" .. endMarker .. "]" .. endMarker)
 end
 
 local function stripPacket(pkt)
@@ -48,7 +48,7 @@ end
 
 local function countBufferedPackets(buffer)
 	local i = 1
-	while #buffer > 0 do
+	while #buffer > 0 and i <= #buffer do
 		local startPos = containsBegin(buffer[i])
 		if startPos then
 			local endPos, endPkt
@@ -63,9 +63,13 @@ local function countBufferedPackets(buffer)
 				for j = i+1, endPkt-1 do
 					table.insert(pkt, buffer[j])
 				end
-				table.insert(pkt, buffer[endPkt]:sub(1, -endPos))
+				table.insert(pkt, buffer[endPkt]:sub(1, endPos))
 
-				table.insert(buffer.packets, stripPacket(table.concat(pkt)))
+				if endPkt == i then
+					pkt = {buffer[i]:sub(startPos, endPos)}
+				end
+
+				table.insert(buffer.packets, (stripPacket(table.concat(pkt))))
 
 				for j = i, endPkt-1 do
 					table.remove(buffer, i)
@@ -92,7 +96,8 @@ end
 local udpPlusClient = {}
 
 function udpPlusClient:_connect()
-	self._buffer = {}
+	self._buffer = { packets = {} }
+	self._bufferedPackets = 0
 	return true
 end
 
@@ -134,7 +139,7 @@ end
 local udpPlusServer = {}
 
 function udpPlusServer:_listen()
-	self._buffer = { packets = {} }
+	self._buffer = {}
 	return parentServer._listen(self)
 end
 
