@@ -53,4 +53,8 @@ if pcall(require, "enet") then
 	lube.enetServer = common.class("lube.enetServer", enetServer, lube.Server)
 end
 
+local udpPlusClient, udpPlusServer = subrequire("udpplus")(udpClient, udpServer)
+lube.udpPlusClient = common.class("lube.udpPlusClient", udpPlusClient, lube.udpClient)
+lube.udpPlusServer = common.class("lube.udpPlusServer", udpPlusServer, lube.udpServer)
+
 return lube
