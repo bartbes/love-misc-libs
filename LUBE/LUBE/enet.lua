@@ -23,7 +23,7 @@ function enetClient:_connect()
 end
 
 function enetClient:_disconnect()
-	self.socket:disconnect()
+	self.peer:disconnect()
 	return self.socket:flush()
 end
 
