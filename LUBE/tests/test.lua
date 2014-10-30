@@ -1,6 +1,6 @@
 require "socket"
 require "tests.slither"
-require "LUBE.init"
+lube = require "LUBE.init"
 
 local tests = {}
 local testtypes = {

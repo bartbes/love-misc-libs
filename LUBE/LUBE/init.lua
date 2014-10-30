@@ -31,7 +31,7 @@ if _G.common and _G.common.class then
 	common = _G.common
 end
 
-lube = {}
+local lube = {}
 
 -- All the submodules!
 local client, server = subrequire "core"
