@@ -23,8 +23,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ]]
 
-__HAS_SECS_COMPATIBLE_CLASSES__ = true
-
 local class_mt = {}
 
 function class_mt:__index(key)
