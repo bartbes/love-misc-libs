@@ -48,7 +48,11 @@ local function threadfunc(...)
 			local defs = definitionsChannel:pop()
 			if not defs then break end
 			for i, v in pairs(defs) do
-				functions[i] = loadstring(v)
+				if v then
+					functions[i] = loadstring(v)
+				else
+					functions[i] = nil
+				end
 			end
 		end
 
@@ -123,6 +127,14 @@ function async.define(name, func)
 
 	return function(cb, ...)
 		return async.call(cb, name, ...)
+	end
+end
+
+function async.undefine(name)
+	functionregistry[name] = nil
+
+	for i, v in ipairs(definitionsChannels) do
+		v:push{[name] = false}
 	end
 end
 
