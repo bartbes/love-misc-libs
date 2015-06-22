@@ -1,0 +1,44 @@
+Packet structure:
+
++---+-----+--------+------+---+-----+
+| 0 | STX | HEADER | BODY | 0 | ETX |
++---+-----+--------+------+---+-----+
+
+Body needs to be escaped, using ESC, so:
+(ESC|STX|ETX) --> ESC ESC
+                  ESC STX
+                  ESC ETX
+
+Then unescaping is:
+
+ESC x --> x
+
+Header:
+
++------+-----+
+| TYPE | EXT |
++------+-----+
+
+Type is a byte which is one of:
+ - CONNECT (0x01)
+ - DISCONNECT (0x02)
+ - DATA (0x03)
+ - CONTINUATION (0x04)
+ - CONNACK (0x05)
+ - PING?
+
+ If TYPE is not DATA nor CONTINUATION then EXT is empty (0-length).
+ If it is DATA or CONTINUATION EXT looks like:
+
+ +-------+---+--------+
+ | SEQNO | 1 | CONTNO |
+ +-------+---+--------+
+
+ Where SEQNO is a unique (usually monotonic) sequence number identifying a data
+ packet and its continuations. And CONTNO is a number identifying this specific
+ continuation. The DATA packet has as CONTNO, the number of continuations to
+ follow. The first CONTINUTION packet has a CONTNO of 1, any following
+ CONTINUATION packet has a CONTNO of 1 + the previous packet's CONTNO. SEQNO and
+ CONTNO are single bytes, which wrap around. Note that CONTNO is not allowed to
+ wrap around in normal operation. The 1 byte is to prevent \0STX and \0ETX
+ occurring in the header.
