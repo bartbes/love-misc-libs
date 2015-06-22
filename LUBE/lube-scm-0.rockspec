@@ -27,10 +27,12 @@ dependencies = {
 build = {
 	type = "builtin",
 	modules = {
-		["lube.core"] = "LUBE/core.lua",
-		["lube.enet"] = "LUBE/enet.lua",
-		["lube.init"] = "LUBE/init.lua",
-		["lube.tcp"]  = "LUBE/tcp.lua",
-		["lube.udp"]  = "LUBE/udp.lua",
+		["lube.core"]     = "LUBE/core.lua",
+		["lube.enet"]     = "LUBE/enet.lua",
+		["lube.init"]     = "LUBE/init.lua",
+		["lube.tcp"]      = "LUBE/tcp.lua",
+		["lube.udp"]      = "LUBE/udp.lua",
+		["lube.lube"]     = "LUBE/lube.lua",
+		["lube.protocol"] = "LUBE/protocol.lua",
 	}
 }
