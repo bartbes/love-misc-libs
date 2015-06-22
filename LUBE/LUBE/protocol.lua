@@ -43,8 +43,7 @@ function protocol.createheader(type, seqno, contno)
 end
 
 function protocol.createpacket(header, payload)
-	local body = protocol.escape(payload)
-	return "\0" .. STX .. header .. body .. "\0" .. ETX
+	return "\0" .. STX .. header .. payload .. "\0" .. ETX
 end
 
 function protocol.findpacket(buffer)
