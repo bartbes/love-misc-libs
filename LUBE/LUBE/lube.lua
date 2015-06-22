@@ -218,7 +218,8 @@ return function(protocol)
 		if not pkt then return nil end
 
 		-- Handle the packet, the difficult part
-		return handlePacket(pkt, pktclient.pktbuffer)
+		local pkt = handlePacket(pkt, pktclient.pktbuffer)
+		return pkt, pktclientid
 	end
 
 	function lubeServer:accept()
