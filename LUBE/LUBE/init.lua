@@ -2,8 +2,12 @@
 local modulename = ...
 modulename = modulename:match("^(.+)%.init$") or modulename
 
-local function subrequire(sub)
-	return unpack(require(modulename .. "." .. sub))
+local function subrequire(sub, ...)
+	local mod = require(modulename .. "." .. sub)
+	if select('#', ...) > 0 then
+		mod = mod(...)
+	end
+	return unpack(mod)
 end
 
 -- Common Class fallback
@@ -45,6 +49,11 @@ lube.udpServer = common.class("lube.udpServer", udpServer, lube.Server)
 local tcpClient, tcpServer = subrequire "tcp"
 lube.tcpClient = common.class("lube.tcpClient", tcpClient, lube.Client)
 lube.tcpServer = common.class("lube.tcpServer", tcpServer, lube.Server)
+
+local protocol = subrequire("protocol")
+local lubeClient, lubeServer = subrequire("lube", protocol)
+lube.lubeClient = common.class("lube.lubeClient", lubeClient, lube.Client)
+lube.lubeServer = common.class("lube.lubeServer", lubeServer, lube.Server)
 
 -- If enet is found, load that, too
 if pcall(require, "enet") then
