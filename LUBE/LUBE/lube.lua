@@ -166,7 +166,7 @@ return function(protocol)
 			end
 		else
 			f = function(data)
-				for clientid, _ in pairs(self.clients) do
+				for clientid, _ in pairs(self._clients) do
 					local ip, port = clientid:match("^(.-):(%d+)$")
 					self.socket:sendto(data, ip, tonumber(port))
 				end
@@ -194,6 +194,7 @@ return function(protocol)
 		local data, ip, port = self.socket:receivefrom()
 		if data then
 			local clientid = ip .. ":" .. port
+			-- TODO Clean self._clients
 			self._clients[clientid] = self._clients[clientid] or
 			{
 				recvbuffer = "",
@@ -214,7 +215,7 @@ return function(protocol)
 		end
 
 		-- If there were no packets, stop now
-		if not pkg then return nil end
+		if not pkt then return nil end
 
 		-- Handle the packet, the difficult part
 		return handlePacket(pkt, pktclient.pktbuffer)
