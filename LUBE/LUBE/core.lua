@@ -82,6 +82,7 @@ function client:disconnect()
 		self:_disconnect()
 		self.host = nil
 		self.port = nil
+		self.connected = false
 	end
 end
 
