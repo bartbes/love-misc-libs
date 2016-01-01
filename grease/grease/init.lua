@@ -35,31 +35,31 @@ if _G.common and _G.common.class then
 	common = _G.common
 end
 
-local lube = {}
+local grease = {}
 
 -- All the submodules!
 local client, server = subrequire "core"
-lube.Client = common.class("lube.Client", client)
-lube.Server = common.class("lube.Server", server)
+grease.Client = common.class("grease.Client", client)
+grease.Server = common.class("grease.Server", server)
 
 local udpClient, udpServer = subrequire "udp"
-lube.udpClient = common.class("lube.udpClient", udpClient, lube.Client)
-lube.udpServer = common.class("lube.udpServer", udpServer, lube.Server)
+grease.udpClient = common.class("grease.udpClient", udpClient, grease.Client)
+grease.udpServer = common.class("grease.udpServer", udpServer, grease.Server)
 
 local tcpClient, tcpServer = subrequire "tcp"
-lube.tcpClient = common.class("lube.tcpClient", tcpClient, lube.Client)
-lube.tcpServer = common.class("lube.tcpServer", tcpServer, lube.Server)
+grease.tcpClient = common.class("grease.tcpClient", tcpClient, grease.Client)
+grease.tcpServer = common.class("grease.tcpServer", tcpServer, grease.Server)
 
 local protocol = subrequire("protocol")
-local lubeClient, lubeServer = subrequire("lube", protocol)
-lube.lubeClient = common.class("lube.lubeClient", lubeClient, lube.Client)
-lube.lubeServer = common.class("lube.lubeServer", lubeServer, lube.Server)
+local lightningClient, lightningServer = subrequire("lightning", protocol)
+grease.lightningClient = common.class("grease.lightningClient", lightningClient, grease.Client)
+grease.lightningServer = common.class("grease.lightningServer", lightningServer, grease.Server)
 
 -- If enet is found, load that, too
 if pcall(require, "enet") then
 	local enetClient, enetServer = subrequire "enet"
-	lube.enetClient = common.class("lube.enetClient", enetClient, lube.Client)
-	lube.enetServer = common.class("lube.enetServer", enetServer, lube.Server)
+	grease.enetClient = common.class("grease.enetClient", enetClient, grease.Client)
+	grease.enetServer = common.class("grease.enetServer", enetServer, grease.Server)
 end
 
-return lube
+return grease

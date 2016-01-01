@@ -1,4 +1,4 @@
-# <a id="intro"/> LUBE #
+# <a id="intro"/> grease #
 
 * [Introduction][intro]
 * [Client][client]
@@ -9,8 +9,8 @@
 	* [Callbacks][servercb]
 	* [Server Implementations][serverimpl]
 
-LUBE has recently switched to being class based, and to do that while still providing the users with freedom, it uses [Class Commons][classcommons].
-This means that to use LUBE, you will need to use a [Class Commons][classcommons]-compatible class library.
+grease has recently switched to being class based, and to do that while still providing the users with freedom, it uses [Class Commons][classcommons].
+This means that to use grease, you will need to use a [Class Commons][classcommons]-compatible class library.
 
 This document uses a generic class syntax like defined below:
 
@@ -19,10 +19,10 @@ This document uses a generic class syntax like defined below:
 
 ## <a id="client"/> Client ##
 
-The client class, lube.Client, defines the following set of functions (or expects its implementations to implement them).
-'client' is assumed to be an instance of a lube.Client implementation according to:
+The client class, grease.Client, defines the following set of functions (or expects its implementations to implement them).
+'client' is assumed to be an instance of a grease.Client implementation according to:
 
-	protocolClient = subclass(lube.Client)
+	protocolClient = subclass(grease.Client)
 	protocolClient._implemented = true
 	-- define protocolClient
 	client = protocolClient()
@@ -66,18 +66,18 @@ You can set your callback functions in the callbacks table, there is 1 callback:
 
 ### <a id="clientimpl"/> Client Implementations ###
 
-At the moment LUBE ships with 2 client implementations (but it can of course be extended by subclassing lube.Client).
+At the moment grease ships with 2 client implementations (but it can of course be extended by subclassing grease.Client).
 These implementations are:
 
-* lube.udpClient: The one for general use, just udp.
-* lube.tcpClient: And for those wanting tcp, just tcp.
+* grease.udpClient: The one for general use, just udp.
+* grease.tcpClient: And for those wanting tcp, just tcp.
 
 ## <a id="server"/> Server ##
 
-The server class, lube.Server, defines the following set of functions (or expects its implementations to implement them).
-'server' is assumed to be an instance of a lube.Server implementation according to:
+The server class, grease.Server, defines the following set of functions (or expects its implementations to implement them).
+'server' is assumed to be an instance of a grease.Server implementation according to:
 
-	protocolServer = subclass(lube.Server)
+	protocolServer = subclass(grease.Server)
 	protocolServer._implemented = true
 	-- define protocolServer
 	server = protocolServer()
@@ -130,11 +130,11 @@ You can set your callback functions in the callbacks table, there are 3 callback
   
 ### <a id="serverimpl"/> Server Implementations ###
 
-LUBE ships with 2 server implementations (more can of course be added).
+grease ships with 2 server implementations (more can of course be added).
 These are:
 
-* lube.udpServer: The normal one, matches udpClient, just udp.
-* lube.tcpServer: And the tcp version, matches tcpClient, just tcp.
+* grease.udpServer: The normal one, matches udpClient, just udp.
+* grease.tcpServer: And the tcp version, matches tcpClient, just tcp.
 
 [intro]: #intro
 [client]: #client

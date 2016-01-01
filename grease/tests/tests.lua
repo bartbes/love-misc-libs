@@ -1,4 +1,4 @@
-class "lube.testClient" ("lube.Client") {
+class "grease.testClient" ("grease.Client") {
 	_implemented = true,
 
 	createSocket = function(self)
@@ -33,7 +33,7 @@ class "lube.testClient" ("lube.Client") {
 	end
 }
 
-class "lube.testServer" ("lube.Server") {
+class "grease.testServer" ("grease.Server") {
 	_implemented = true,
 
 	createSocket = function(self)
@@ -63,39 +63,39 @@ class "lube.testServer" ("lube.Server") {
 }
 
 UnitTest("Generic Client instantiation", function()
-	assert(not pcall(lube.Client))
+	assert(not pcall(grease.Client))
 end)
 
 UnitTest("Generic Server instantiation", function()
-	assert(not pcall(lube.Server))
+	assert(not pcall(grease.Server))
 end)
 
 UnitTest("UdpClient instantiation", function()
-	assert(lube.udpClient())
+	assert(grease.udpClient())
 end)
 
 UnitTest("TcpClient instantiation", function()
-	assert(lube.tcpClient())
+	assert(grease.tcpClient())
 end)
 
 UnitTest("UdpServer instantiation", function()
-	assert(lube.udpServer())
+	assert(grease.udpServer())
 end)
 
 UnitTest("TcpServer instantiation", function()
-	assert(lube.tcpServer())
+	assert(grease.tcpServer())
 end)
 
 UnitTest("TestClient instantiation", function()
-	assert(lube.testClient())
+	assert(grease.testClient())
 end)
 
 UnitTest("TestServer instantiation", function()
-	assert(lube.testServer())
+	assert(grease.testServer())
 end)
 
 UnitTest("Client connect handshake", function()
-	local client = lube.testClient()
+	local client = grease.testClient()
 	client.handshake = "handshake"
 
 	client:connect("127.0.0.1", 9797, false)
@@ -104,7 +104,7 @@ UnitTest("Client connect handshake", function()
 end)
 
 UnitTest("Client disconnect handshake", function()
-	local client = lube.testClient()
+	local client = grease.testClient()
 	client.handshake = "handshake"
 
 	client:connect("127.0.0.1", 9797, false)
@@ -114,7 +114,7 @@ UnitTest("Client disconnect handshake", function()
 end)
 
 UnitTest("Client send", function()
-	local client = lube.testClient()
+	local client = grease.testClient()
 	client:connect("127.0.0.1", 9797, false)
 
 	client:send("hellothere")
@@ -123,7 +123,7 @@ UnitTest("Client send", function()
 end)
 
 UnitTest("Client receive", function()
-	local client = lube.testClient()
+	local client = grease.testClient()
 	client:connect("127.0.0.1", 9797, false)
 
 	client.received = "hellothere"
@@ -132,7 +132,7 @@ UnitTest("Client receive", function()
 end)
 
 UnitTest("Client recv callback", function()
-	local client = lube.testClient()
+	local client = grease.testClient()
 	client:connect("127.0.0.1", 9797, false)
 
 	client.received = "hellothere"
@@ -148,7 +148,7 @@ UnitTest("Client recv callback", function()
 end)
 
 UnitTest("Server connect callback", function()
-	local server = lube.testServer()
+	local server = grease.testServer()
 	server.handshake = "handshake"
 	server:listen(9797)
 
@@ -166,7 +166,7 @@ UnitTest("Server connect callback", function()
 end)
 
 UnitTest("Server disconnect callback", function()
-	local server = lube.testServer()
+	local server = grease.testServer()
 	server.handshake = "handshake"
 	server:listen(9797)
 
@@ -186,7 +186,7 @@ UnitTest("Server disconnect callback", function()
 end)
 
 UnitTest("Server recv callback", function()
-	local server = lube.testServer()
+	local server = grease.testServer()
 	server.handshake = "handshake"
 	server:listen(9797)
 
@@ -207,7 +207,7 @@ UnitTest("Server recv callback", function()
 end)
 
 UnitTest("Client ping", function()
-	local client = lube.testClient()
+	local client = grease.testClient()
 	client:setPing(true, 2, "ping")
 	client:connect("127.0.0.1", 9797, false)
 
@@ -217,7 +217,7 @@ UnitTest("Client ping", function()
 end)
 
 UnitTest("Server ping", function()
-	local server = lube.testServer()
+	local server = grease.testServer()
 	server.handshake = "handshake"
 	server:setPing(true, 2, "ping")
 	server:listen(9797)
@@ -241,7 +241,7 @@ UnitTest("Server ping", function()
 end)
 
 UnitTest("Server generic ping", function()
-	local server = lube.testServer()
+	local server = grease.testServer()
 	server.handshake = "handshake"
 	server:setPing(true, 2, "ping")
 	server:listen(9797)
@@ -271,7 +271,7 @@ ImplTest("Udp client connect handshake", function()
 	serv:setsockname("*", 9797)
 	serv:settimeout(5)
 
-	local client = lube.udpClient()
+	local client = grease.udpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -287,7 +287,7 @@ ImplTest("Tcp client connect", function()
 	serv:bind("*", 9797)
 	serv:listen(1)
 
-	local client = lube.tcpClient()
+	local client = grease.tcpClient()
 	client:connect("127.0.0.1", 9797, false)
 
 	assert(serv:accept())
@@ -300,7 +300,7 @@ ImplTest("Tcp client connect handshake", function()
 	serv:bind("*", 9797)
 	serv:listen(1)
 
-	local client = lube.tcpClient()
+	local client = grease.tcpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -315,7 +315,7 @@ ImplTest("Udp client disconnect handshake", function()
 	serv:setsockname("*", 9797)
 	serv:settimeout(5)
 
-	local client = lube.udpClient()
+	local client = grease.udpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -336,7 +336,7 @@ ImplTest("Tcp client disconnect handshake", function()
 	serv:bind("*", 9797)
 	serv:listen(1)
 
-	local client = lube.tcpClient()
+	local client = grease.tcpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -356,7 +356,7 @@ ImplTest("Udp client recv callback", function()
 	serv:setsockname("*", 9797)
 	serv:settimeout(5)
 
-	local client = lube.udpClient()
+	local client = grease.udpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -381,7 +381,7 @@ ImplTest("Udp client receive", function()
 	serv:setsockname("*", 9797)
 	serv:settimeout(5)
 
-	local client = lube.udpClient()
+	local client = grease.udpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -402,7 +402,7 @@ ImplTest("Tcp client recv callback", function()
 	serv:bind("*", 9797)
 	serv:listen(1)
 
-	local client = lube.tcpClient()
+	local client = grease.tcpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -429,7 +429,7 @@ ImplTest("Tcp client receive", function()
 	serv:bind("*", 9797)
 	serv:listen(1)
 
-	local client = lube.tcpClient()
+	local client = grease.tcpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -450,7 +450,7 @@ ImplTest("Tcp client send", function()
 	serv:bind("*", 9797)
 	serv:listen(1)
 
-	local client = lube.tcpClient()
+	local client = grease.tcpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 
@@ -469,7 +469,7 @@ ImplTest("Udp client send", function()
 	serv:setsockname("*", 9797)
 	serv:settimeout(5)
 
-	local client = lube.udpClient()
+	local client = grease.udpClient()
 	client.handshake = "handshake"
 	client:connect("127.0.0.1", 9797, false)
 

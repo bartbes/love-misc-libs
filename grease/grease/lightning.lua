@@ -69,10 +69,10 @@ return function(protocol)
 
 	--- CLIENT ---
 
-	local lubeClient = {}
-	lubeClient._implemented = true
+	local lightningClient = {}
+	lightningClient._implemented = true
 
-	function lubeClient:createSocket()
+	function lightningClient:createSocket()
 		self.socket = socket.udp()
 		self.socket:settimeout(0)
 		self._recvbuffer = ""
@@ -80,7 +80,7 @@ return function(protocol)
 		self._pktbuffer = initpktbuffer{}
 	end
 
-	function lubeClient:_connect()
+	function lightningClient:_connect()
 		-- 'Connect' in the udp style of no longer having to specify a host and port
 		self.socket:setpeername(self.host, self.port)
 
@@ -93,7 +93,7 @@ return function(protocol)
 		return true
 	end
 
-	function lubeClient:_disconnect()
+	function lightningClient:_disconnect()
 		-- Form a disconnect packet
 		local hdr = protocol.createheader("DISCONNECT")
 		local pkt = protocol.createpacket(hdr, "")
@@ -102,14 +102,14 @@ return function(protocol)
 		return true
 	end
 
-	function lubeClient:_send(data)
+	function lightningClient:_send(data)
 		local function f(data)
 			return self.socket:send(data)
 		end
 		return sendPacket(self, f, data)
 	end
 
-	function lubeClient:_getPacket()
+	function lightningClient:_getPacket()
 		local buffer = self._recvbuffer
 		local start, finish = protocol.findpacket(buffer)
 		if not start then return nil end
@@ -122,7 +122,7 @@ return function(protocol)
 		return pkt
 	end
 
-	function lubeClient:_receive()
+	function lightningClient:_receive()
 		local data = self.socket:receive()
 		if data then
 			self._recvbuffer = self._recvbuffer .. data
@@ -136,10 +136,10 @@ return function(protocol)
 
 	--- SERVER ---
 
-	local lubeServer = {}
-	lubeServer._implemented = true
+	local lightningServer = {}
+	lightningServer._implemented = true
 
-	function lubeServer:createSocket()
+	function lightningServer:createSocket()
 		self.socket = socket.udp()
 		self.socket:settimeout(0)
 
@@ -152,11 +152,11 @@ return function(protocol)
 		}
 	end
 
-	function lubeServer:_listen()
+	function lightningServer:_listen()
 		self.socket:setsockname("*", self.port)
 	end
 
-	function lubeServer:send(data, clientid)
+	function lightningServer:send(data, clientid)
 		-- We conviently use ip:port as clientid.
 		local f
 		if clientid then
@@ -176,7 +176,7 @@ return function(protocol)
 		return sendPacket(self, f, data)
 	end
 
-	function lubeServer:_getPacket(client)
+	function lightningServer:_getPacket(client)
 		local buffer = client.recvbuffer
 		local start, finish = protocol.findpacket(buffer)
 		if not start then return nil end
@@ -189,7 +189,7 @@ return function(protocol)
 		return pkt
 	end
 
-	function lubeServer:receive()
+	function lightningServer:receive()
 		-- Buffer all incoming data
 		local data, ip, port = self.socket:receivefrom()
 		if data then
@@ -222,8 +222,8 @@ return function(protocol)
 		return pkt, pktclientid
 	end
 
-	function lubeServer:accept()
+	function lightningServer:accept()
 	end
 
-	return {lubeClient, lubeServer}
+	return {lightningClient, lightningServer}
 end

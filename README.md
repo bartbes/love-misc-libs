@@ -13,7 +13,7 @@ list of projects that are still current:
 
 - async <sup>1</sup>
 - inifile <sup>1</sup>
-- LUBE <sup>1</sup>
+- grease <sup>1</sup>
 - repler
 - SECL
 - SoundManager

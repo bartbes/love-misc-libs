@@ -1,6 +1,6 @@
-require "socket"
+socket = require "socket"
 require "tests.slither"
-lube = require "LUBE.init"
+grease = require "grease.init"
 
 local tests = {}
 local testtypes = {
@@ -9,7 +9,7 @@ local testtypes = {
 }
 
 local mt = {}
-mt.__index = {require = require, io = io, print = print, assert = assert, error = error, pcall = pcall, math = math, lube = lube, socket = socket}
+mt.__index = {require = require, io = io, print = print, assert = assert, error = error, pcall = pcall, math = math, grease = grease, socket = socket}
 
 class "Test" {
 	__init__ = function(self, name, func)
