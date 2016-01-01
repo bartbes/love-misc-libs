@@ -23,11 +23,4 @@ bugfixes in these projects.
 
 <sup>1</sup> Docs available
 
-Deprecated projects
--------------------
-
-- AnAL
-- Lag-o-meter 3000
-- translator
-
 [docs]: http://docs.bartbes.com
