@@ -1,0 +1,3 @@
+[submodule "inifile"]
+	path = inifile
+	url = https://github.com/bartbes/inifile.git
