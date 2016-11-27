@@ -60,7 +60,7 @@ function client:connect(host, port, dns)
 	-- Set it up for our new connection.
 	self:createSocket()
 	self.host = host
-	self.port = port
+	self.port = tonumber(port)
 	-- Ask our implementation to actually connect.
 	local success, err = self:_connect()
 	if not success then
@@ -170,7 +170,7 @@ end
 function server:listen(port)
 	-- Create a socket, set the port and listen.
 	self:createSocket()
-	self.port = port
+	self.port = tonumber(port)
 	self:_listen()
 end
 
